@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Авторизация</title>
+    <link rel="stylesheet" href="style_index.css">
+</head>
+<body>
+    <div class="login-container">
+        <h1>Авторизация</h1>
+        <form id="loginForm">
+            <label for="login">Логин:</label>
+            <input type="text" id="login" name="login" required>
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">Войти</button>
+        </form>
+        <div class="error-message" id="errorMessage"></div>
+    </div>
+    <div class="footer">
+        <p>© 2024 Test project ATON</p>
+    </div>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const login = document.getElementById('login').value;
+            const password = document.getElementById('password').value;
+            fetch(`/login?login=${encodeURIComponent(login)}&password=${encodeURIComponent(password)}`, {
+                method: 'POST'
+            })
+            .then(response => response.text())
+            .then(data => {
+                const errorMessage = document.getElementById('errorMessage');
+                if (data.includes('Неверный логин или пароль')) {
+                    errorMessage.textContent = 'Неверный логин или пароль';
+                } else {
+                    window.location.href = `/clients?responsible=${data}`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

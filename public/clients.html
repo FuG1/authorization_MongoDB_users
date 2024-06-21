@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Клиенты</title>
+    <link rel="stylesheet" href="style_clients.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Клиенты</h1>
+        <div id="clients"></div>
+    </div>
+    <footer>
+        <p>© 2024 Test project ATON</p>
+    </footer>
+    <script>
+        async function fetchClients() {
+            const response = await fetch('/api/clients' + window.location.search);
+            const clients = await response.json();
+            const clientsDiv = document.getElementById('clients');
+            clientsDiv.innerHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Фамилия</th>
+                            <th>Имя</th>
+                            <th>Отчество</th>
+                            <th>Статус</th>
+                            <th>Изменить статус</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${clients.map(client => `
+                            <tr>
+                                <td>${client.last_name}</td>
+                                <td>${client.first_name}</td>
+                                <td>${client.middle_name}</td>
+                                <td>${client.status}</td>
+                                <td>
+                                    <select onchange="updateStatus(${client.account_number}, this.value)">
+                                        <option value="Не в работе" ${client.status === 'Не в работе' ? 'selected' : ''}>Не в работе</option>
+                                        <option value="В работе" ${client.status === 'В работе' ? 'selected' : ''}>В работе</option>
+                                        <option value="Отказ" ${client.status === 'Отказ' ? 'selected' : ''}>Отказ</option>
+                                        <option value="Сделка закрыта" ${client.status === 'Сделка закрыта' ? 'selected' : ''}>Сделка закрыта</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        async function updateStatus(account_number, status) {
+            await fetch('/update-status', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ account_number, status })
+            });
+            fetchClients();
+        }
+
+        fetchClients();
+    </script>
+</body>
+</html>
