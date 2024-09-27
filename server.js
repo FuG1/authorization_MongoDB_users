@@ -16,12 +16,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
-// Форма авторизации
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
 });
 
-// Авторизация пользователя
 app.post('/login', async (req, res) => {
     if (!usersCollection) {
         return res.status(500).send('Database not initialized');
@@ -42,13 +40,10 @@ app.post('/login', async (req, res) => {
 })
 
 
-
-// Отправка HTML страницы клиентов
 app.get('/clients', (req, res) => {
     res.sendFile(__dirname + '/public/clients.html');
 });
 
-// Получение клиентов ответственного пользователя
 app.get('/api/clients', async (req, res) => {
     if (!clientsCollection) {
         return res.status(500).send('Database not initialized');
@@ -64,8 +59,6 @@ app.get('/api/clients', async (req, res) => {
 });
 
 
-
-// Изменение статуса клиента
 app.post('/update-status', async (req, res) => {
     const { account_number, status } = req.body;
     try {
